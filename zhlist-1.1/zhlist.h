@@ -1,10 +1,3 @@
-/*
-
-作者:韩智鸿
-
-han.zhihong@qq.com
-
-*/
 #ifndef _ZH_D_LIST_NODE_MUD_H__
 #define _ZH_D_LIST_NODE_MUD_H__
 

@@ -1,11 +1,3 @@
-/*
-
-作者:韩智鸿
-
-han.zhihong@qq.com
-
-*/
-
 #ifndef _ZH_D_LIST_NODE_MUD_EXP_H__
 #define _ZH_D_LIST_NODE_MUD_EXP_H__
 
@@ -35,26 +27,26 @@ typedef struct _TzhElementNode{
 }TzhListElementNode;
 
 void zhListNodeInit(TzhListElementNode* eleNode);
-TzhListElementNode * zhListNodeFind(TzhList* pList,void *element);
-TzhListElementNode * zhListNodeFindByObject(TzhList* pList,void *pElement);
+TzhListElementNode * zhListNodeFind(TzhList* pList,void *elementNode);
+TzhListElementNode * zhListNodeFindWithObject(TzhList* pList,void *pElement);
+TzhListElementNode *zhListNodeFindWithIndex(TzhList *pList, int index);
 
-TzhListElementNode *zhListNodeFindByIndex(TzhList *pList, int index);
 TzhListElementNode * zhListNodeAdd(TzhList *pList,void *pElement,int nElementSize,int elementType);
 
-//删除成功返回顶部元素
-TzhListElementNode * zhListNodePopFirst(TzhList *pListNodeList);
 
-//删除成功返回最后一个元素
-TzhListElementNode * zhListNodePopBack(TzhList *pListNodeList);
-
+//释放元素内存,不删除节点
+void zhListNodeFree(TzhListElementNode* node);
 //删除指定节点
 TzhListElementNode* zhListNodeDelete(TzhList* pListNodeList,TzhListElementNode* node);
+//删除节点并释放内存
+TzhListElementNode* zhListNodeFreeAndDelete(TzhList* pListNodeList,TzhListElementNode* node);
 
-//释放链表内所有内容
-void zhListNodeReleaseAllElement(TzhList* pList);
-
-//删除链表,并返回工作映射链表的下一个链表节点内所有对象
-bool zhListNodeDeleteAll(TzhList *pList);
+//删除链表,并不会释放其子节点元素的内容
+void zhListNodeDeleteAll(TzhList *pList);
+//清空所有元素,并不删除节点
+void zhListNodeFreeAll(TzhList* pList);
+//释放链表内所有内容,并删除链表节点
+void zhListNodeFreeAndDeleteAll(TzhList* pList);
 
 #ifdef __cplusplus
 }

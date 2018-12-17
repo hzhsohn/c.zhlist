@@ -1,11 +1,3 @@
-/*
-
-作者:韩智鸿
-
-han.zhihong@qq.com
-
-*/
-
 #include "zhlist_exp.h"
 #include <stdlib.h>
 
@@ -14,14 +6,14 @@ void zhListNodeInit(TzhListElementNode* eleNode)
 	memset(eleNode,0,sizeof(TzhListElementNode));
 }
 
-TzhListElementNode * zhListNodeFind(TzhList* pList,void *element)
+TzhListElementNode * zhListNodeFind(TzhList* pList,void *elementNode)
 {
 	TzhListElementNode *eleNode;
 	for(eleNode = (TzhListElementNode *)zhListFirst(pList);
         eleNode != NULL;
         eleNode = (TzhListElementNode *)zhListNext((TzhListNode *)eleNode))
 	{
-		if(eleNode==element)
+		if(eleNode==elementNode)
 		{
 			return eleNode;
 		}
@@ -29,7 +21,7 @@ TzhListElementNode * zhListNodeFind(TzhList* pList,void *element)
 	return NULL;
 }
 
-TzhListElementNode * zhListNodeFindByObject(TzhList* pList,void *pElement)
+TzhListElementNode * zhListNodeFindWithObject(TzhList* pList,void *pElement)
 {
 	TzhListElementNode *eleNode;
 	for(eleNode = (TzhListElementNode *)zhListFirst(pList);
@@ -44,7 +36,7 @@ TzhListElementNode * zhListNodeFindByObject(TzhList* pList,void *pElement)
 	return NULL;
 }
 
-TzhListElementNode *zhListNodeFindByIndex(TzhList *pList, int index)
+TzhListElementNode *zhListNodeFindWithIndex(TzhList *pList, int index)
 {
 	int i;
     TzhListElementNode *eleNode;
@@ -117,7 +109,7 @@ TzhListElementNode * zhListNodePopBack(TzhList *pListNodeList)
 	return pNew;
 }
 
-//删除指定节点
+//删除指定节点,不释放元素
 TzhListElementNode* zhListNodeDelete(TzhList* pListNodeList,TzhListElementNode* node)
 {
 	TzhListElementNode *pNew=NULL;
@@ -131,13 +123,57 @@ TzhListElementNode* zhListNodeDelete(TzhList* pListNodeList,TzhListElementNode* 
 	return NULL;
 }
 
-//释放链表内所有内容
-void zhListNodeReleaseAllElement(TzhList* pList)
+void zhListNodeFree(TzhListElementNode* node)
+{
+	if(node->pElement)
+	{
+		free(node->pElement);
+		node->pElement=NULL;
+		node->nElementSize=0;
+		node->nEleType=0;
+	}
+}
+
+TzhListElementNode* zhListNodeFreeAndDelete(TzhList* pListNodeList,TzhListElementNode* node)
+{
+	TzhListElementNode *pNew=NULL;
+	if(node)
+	{
+		pNew=(TzhListElementNode *)zhListNext((TzhListNode *)node);
+		zhListDelete(pListNodeList, (TzhListNode *)node);
+		if(node->pElement)
+		{
+			free(node->pElement);
+			node->pElement=NULL;
+			node->nElementSize=0;
+			node->nEleType=0;
+		}
+		free(node);	
+		return pNew;
+	}
+	return NULL;
+}
+
+//删除链表,并返回工作映射链表的下一个链表节点内所有对象
+void zhListNodeDeleteAll(TzhList *pList)
+{
+	TzhListElementNode *pListNode;
+	if(pList)
+	{
+		for(pListNode = (TzhListElementNode *)zhListFirst(pList); pListNode != NULL;)
+		{
+			pListNode=zhListNodeDelete(pList,pListNode);
+		}
+	}
+}
+
+//清空所有元素,并不删除节点
+void zhListNodeFreeAll(TzhList* pList)
 {
 	TzhListElementNode *eleNode;
 	for(eleNode = (TzhListElementNode *)zhListFirst(pList);
-		eleNode != NULL;
-		eleNode = (TzhListElementNode *)zhListNext((TzhListNode *)eleNode))
+        eleNode != NULL;
+        eleNode = (TzhListElementNode *)zhListNext((TzhListNode *)eleNode))
 	{
 		if(eleNode->pElement)
 		{
@@ -149,19 +185,22 @@ void zhListNodeReleaseAllElement(TzhList* pList)
 	}
 }
 
-//删除链表,并返回工作映射链表的下一个链表节点内所有对象
-bool zhListNodeDeleteAll(TzhList *pList)
+//释放链表内所有内容
+void zhListNodeFreeAndDeleteAll(TzhList* pList)
 {
 	TzhListElementNode *pListNode;
 	if(pList)
 	{
 		for(pListNode = (TzhListElementNode *)zhListFirst(pList); pListNode != NULL;)
 		{
+			if(pListNode->pElement)
+			{
+				free(pListNode->pElement);
+				pListNode->pElement=NULL;
+				pListNode->nElementSize=0;
+				pListNode->nEleType=0;
+			}
 			pListNode=zhListNodeDelete(pList,pListNode);
 		}
-		return true;
 	}
-	else
-		return false;
 }
-

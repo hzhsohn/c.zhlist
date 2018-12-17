@@ -1,9 +1,6 @@
 /*
-
-作者:韩智鸿
-
-han.zhihong@qq.com
-
+* next node of list is the first node, prev node of list is the last node
+* prev of first node is NULL, next of last node is NULL 
 */
 
 #include <stdlib.h>
